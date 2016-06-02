@@ -1,0 +1,35 @@
+from MarginalizedDenoisingAutoencoder import MarginalizedDenoisingAutoencoder
+import numpy as np
+from load_data import load_data
+
+CORRUPTION_LEVEL = 0.3
+LEARNING_RATE = 0.1
+TRAINING_EPOCHS = 15
+BATCH_SIZE = 20
+DATASET = '../Datasets/mnist.pkl.gz'
+
+import timeit
+
+if __name__ == '__main__':
+
+    datasets = load_data(DATASET)
+    train_set_x, train_set_y = datasets[0]
+
+    # compute number of minibatches for training, validation and testing
+    n_train_batches = train_set_x.get_value(borrow=True).shape[0] / BATCH_SIZE
+    train_x = train_set_x.get_value()
+
+    ####################################
+    # BUILDING THE MODEL NO CORRUPTION #
+    ####################################
+    start_time = timeit.default_timer()
+    train_x = train_x[:1000,:]
+    mda = MarginalizedDenoisingAutoencoder(inputs=train_x, corruption_prob=CORRUPTION_LEVEL)
+    reconstruction = mda.get_output(train_x)
+
+    end_time = timeit.default_timer()
+    training_time = (end_time - start_time)
+    sq_error = mda.evaluate_square_error(train_x, reconstruction)
+
+    print "Running time ", training_time
+    print "MSE ", sq_error

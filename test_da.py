@@ -1,6 +1,8 @@
 from MarginalizedDenoisingAutoencoder import MarginalizedDenoisingAutoencoder
 import numpy as np
 from load_data import load_data
+from utils import *
+from PIL import Image
 
 CORRUPTION_LEVEL = 0.3
 LEARNING_RATE = 0.1
@@ -31,5 +33,18 @@ if __name__ == '__main__':
     training_time = (end_time - start_time)
     sq_error = mda.evaluate_square_error(train_x, reconstruction)
 
+    print reconstruction.shape
     print "Running time ", training_time
     print "MSE ", sq_error
+
+    print("Saving original and reconstructed images")
+
+    tiled_image = tile_raster_images(X=train_x[:100,:], img_shape=(28, 28), 
+        tile_shape=(10, 10), tile_spacing=(1, 1))
+    image = Image.fromarray(tiled_image)
+    image.save('OriginalImage.png')
+
+    tiled_image = tile_raster_images(X=reconstruction[:100,:], img_shape=(28, 28), 
+        tile_shape=(10, 10), tile_spacing=(1, 1))
+    image = Image.fromarray(tiled_image)
+    image.save('ReconstructedImage.png')

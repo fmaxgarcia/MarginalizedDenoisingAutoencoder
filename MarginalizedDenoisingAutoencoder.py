@@ -31,15 +31,13 @@ class MarginalizedDenoisingAutoencoder():
         ones = np.ones( (1, inputs.shape[1]) )
         inputs = np.vstack( (inputs, ones) )
 
-        output = self.W.dot(inputs)
+        output = self.W.dot(inputs).T
+        output = np.delete(output, output.shape[1]-1, 1)
         if nonlinearity is not None:
             output = nonlinearity(output)
         return output
 
     def evaluate_square_error(self, inputs, reconstruction):
-        inputs = inputs.T
-        ones = np.ones( (1, inputs.shape[1]) )
-        inputs = np.vstack( (inputs, ones) )
         error = np.mean( (inputs - reconstruction)**2 )
         return error
 

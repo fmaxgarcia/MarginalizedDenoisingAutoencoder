@@ -1,9 +1,11 @@
 import numpy as np
 from MarginalizedDenoisingAutoencoder import MarginalizedDenoisingAutoencoder
 
+from sklearn import svm
+
 class StackedMarginalizedDenoisingAutoencoder():
 
-    def __init__(self, num_layers, corruption_level, inputs):
+    def __init__(self, num_layers, corruption_level, inputs, outputs):
 
         for i in range(num_layers):
             mda = MarginalizedDenoisingAutoencoder(inputs, corruption_level)
@@ -18,3 +20,14 @@ class StackedMarginalizedDenoisingAutoencoder():
             self.reconstruction = reconstruction
 
 
+    def train(self, inputs, outputs):
+        ones = np.ones( (inputs.shape[0], 1) ) #[n_samples, n_features]
+        inputs = np.hstack( (inputs, ones) )
+        self.classifier = svm.SVC()
+        self.classifier.fit(inputs, outputs)
+
+
+    def get_output(self, inputs):
+        ones = np.ones( (inputs.shape[0], 1) ) #[n_samples, n_features]
+        inputs = np.hstack( (inputs, ones) )
+        return self.classifier.predict( inputs )

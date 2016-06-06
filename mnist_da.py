@@ -1,6 +1,6 @@
 from MarginalizedDenoisingAutoencoder import MarginalizedDenoisingAutoencoder
 import numpy as np
-from load_data import load_data
+from load_mnist import load_data
 from utils import *
 from PIL import Image
 

@@ -1,6 +1,6 @@
 from StackedMarginalizedDenoisingAutoencoder import StackedMarginalizedDenoisingAutoencoder
 import numpy as np
-from load_data import load_data
+from load_mnist import load_data
 
 CORRUPTION_LEVEL = 0.3
 LEARNING_RATE = 0.1
@@ -21,6 +21,7 @@ if __name__ == '__main__':
     n_test_batches = test_set_x.get_value(borrow=True).shape[0] / BATCH_SIZE
 
     train_x = train_set_x.get_value()
+    train_y = train_set_y.get_value()
 
     test_x = test_set_x.get_value()
     test_y = test_set_y.get_value()
@@ -29,28 +30,26 @@ if __name__ == '__main__':
     # BUILDING THE MODEL NO CORRUPTION #
     ####################################
     start_time = timeit.default_timer()
-    train_x = train_x[:1000,:]
-    smda = StackedMarginalizedDenoisingAutoencoder(num_layers=3, inputs=train_x, corruption_level=CORRUPTION_LEVEL)
-    
+    train_x = train_x[:10000,:]
+    train_y = train_y[:10000]
+    smda = StackedMarginalizedDenoisingAutoencoder(num_layers=2, corruption_level=CORRUPTION_LEVEL, inputs=train_x, outputs=train_y)
+
+    smda.train(train_x, train_y)    
     end_time = timeit.default_timer()
     training_time = (end_time - start_time)
     
     print "Running time ", training_time
     
 
-    # Still need to implement prediction layer to smda
-    # correct = 0.0
-    # total = 0.0
-    # for batch_index in range(n_test_batches):
-    #     test_minibatch = test_x[batch_index * BATCH_SIZE: (batch_index + 1) * BATCH_SIZE]
-    #     labels_minibatch = test_y[batch_index * BATCH_SIZE: (batch_index + 1) * BATCH_SIZE]
-    #     predictions = sda.get_output(test_minibatch)[0]
-    #     for i in range(predictions.shape[0]):
-    #         pred = np.argmax(predictions[i])
-    #         if pred == labels_minibatch[i]:
-    #             correct += 1
-    #         total += 1
+    predictions = smda.get_output(test_x)
+    correct = 0.0
+    total = 0.0
+    for i in range(predictions.shape[0]):
+        pred = predictions[i]
+        if pred == test_y[i]:
+            correct += 1
+        total += 1
 
-    # print "Correct: ", correct
-    # print "Total: ", total
-    # print "Accuracy: ", (correct / total)
+    print "Correct: ", correct
+    print "Total: ", total
+    print "Accuracy: ", (correct / total)

@@ -8,6 +8,7 @@ class StackedMarginalizedDenoisingAutoencoder():
     def __init__(self, num_layers, corruption_level, inputs, outputs):
 
         for i in range(num_layers):
+            print "Creating mDA ", i
             mda = MarginalizedDenoisingAutoencoder(inputs, corruption_level)
             if i < num_layers-1:
                 reconstruction = mda.get_output(inputs, nonlinearity=np.tanh)

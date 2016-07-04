@@ -1,0 +1,24 @@
+books -> dvd
+Accuracy: 0.629564 
+books -> kitchen_&_housewares
+Accuracy: 0.579035 
+books -> electronics
+Accuracy: 0.570593 
+dvd -> books
+Accuracy: 0.646001 
+dvd -> kitchen_&_housewares
+Accuracy: 0.616758 
+dvd -> electronics
+Accuracy: 0.606099 
+kitchen_&_housewares -> books
+Accuracy: 0.616466 
+kitchen_&_housewares -> dvd
+Accuracy: 0.617478 
+kitchen_&_housewares -> electronics
+Accuracy: 0.735673 
+electronics -> books
+Accuracy: 0.605338 
+electronics -> dvd
+Accuracy: 0.610294 
+electronics -> kitchen_&_housewares
+Accuracy: 0.734518 

@@ -52,12 +52,12 @@ if __name__ == '__main__':
 
 
     dimensions = 1000
-    grassmanian_subspaces = flow(original_train_x, original_test_x, t=np.array([0.0, 0.2, 0.4, 0.6, 0.8, 1.0]), k=dimensions, dim_reduction="PCA")
+    grassmanian_subspaces = flow(train_x, test_x, t=np.array([0.0, 0.2, 0.4, 0.6, 0.8, 1.0]), k=dimensions, dim_reduction="PCA")
     projected_data, smdas = [], []
     for i in range(grassmanian_subspaces.shape[0]):
        A = grassmanian_subspaces[i]
-       projected_train = original_train_x.dot( A.dot(A.T) )
-       projected_test = original_test_x.dot( A.dot(A.T) ) 
+       projected_train = train_x.dot( A.dot(A.T) )
+       projected_test = test_x.dot( A.dot(A.T) ) 
 
        pre_train = np.vstack( (projected_train, projected_test) )
  

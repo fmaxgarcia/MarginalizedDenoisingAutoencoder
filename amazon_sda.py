@@ -70,12 +70,8 @@ if __name__ == '__main__':
                 test = original_test_x.dot( A.dot(A.T) )
 
                 ###Extend training and testing with projected data
-                print train_x.shape
-                print train_y.shape
                 train_x = np.vstack( (train_x, train) )
                 train_y = np.hstack( (train_y, original_train_y) )
-                print train_x.shape
-                print train_y.shape
 
                 test_x = np.vstack( (test_x, test) )
                 test_y = np.hstack( (test_y, original_test_y) )
@@ -84,10 +80,10 @@ if __name__ == '__main__':
                 pre_train = np.vstack( (pre_train, train) )
                 pre_train = np.vstack( (pre_train, test) )
     else:
-	train_x = original_train_x
-	train_y = original_train_y
-	test_x = original_test_x
-	test_y = original_test_y
+        train_x = original_train_x
+        train_y = original_train_y
+        test_x = original_test_x
+        test_y = original_test_y
 
         dimensions = train_x.shape[1]
         pre_train = np.vstack( (train_x, test_x) )
@@ -116,13 +112,13 @@ if __name__ == '__main__':
         if pred == test_y[i]:
             correct += 1
         total += 1
-	stdout.write("\rPredicting %d/%d " %(i, predictions.shape[0]))
-	stdout.flush()
+    stdout.write("\rPredicting %d/%d " %(i, predictions.shape[0]))
+    stdout.flush()
 
     print "Correct: ", correct
     print "Total: ", total
     print "Accuracy: ", (correct / total)
 
     with open("Results_G.txt", "a") as myfile:
-	accuracy = correct / total
+    accuracy = correct / total
         myfile.write("%s -> %s\nAccuracy: %f \n" %(str(sys.argv[1]), str(sys.argv[2]), accuracy))

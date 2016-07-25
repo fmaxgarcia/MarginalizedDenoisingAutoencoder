@@ -3,25 +3,23 @@ import numpy as np
 from load_amazon import load_data
 from sklearn.feature_extraction.text import CountVectorizer
 
+import sys
+sys.path.append("../GrassmanianDomainAdaptation/")
+sys.path.append("../MixtureOfSubspaces/")
+from sklearn.decomposition import PCA
+
+from GrassmanianSampling import flow
+from MixtureOfSubspaces import MixtureOfSubspaces
+
+
 CORRUPTION_LEVEL = 0.3
 LEARNING_RATE = 0.1
-TRAINING_EPOCHS = 15
+TRAINING_EPOCHS = 10
 BATCH_SIZE = 20
 DATASET = '../Datasets/amazon reviews/'
 
-from random import shuffle
-
-import timeit
-
-import sys
-
-sys.path.append("../GrassmanianDomainAdaptation/")
-
-from GrassmanianSampling import flow
-
-grassmannian_sampling = True
-from sklearn.decomposition import PCA
 from sys import stdout
+from random import shuffle
 
 
 def create_projected_data(proj_x, msda):   
@@ -60,22 +58,21 @@ if __name__ == '__main__':
 
     dimensions = 1000
     grassmanian_subspaces = flow(original_train_x, original_test_x, t=np.array([0.0, 0.2, 0.4, 0.6, 0.8, 1.0]), k=dimensions, dim_reduction="PCA")
-    
+
+    num_outputs = np.unique(original_train_y).shape[0]
     proj_train, proj_test = [], []
     for i, subspace in enumerate(grassmanian_subspaces):
         print "Denoising subspace #%d" %(i)
         proj_s = original_train_x.dot( subspace.dot(subspace.T) )
         proj_t = original_test_x.dot( subspace.dot(subspace.T) )
         pre_train = np.vstack( (proj_s, proj_t) )
+    	smda = StackedMarginalizedDenoisingAutoencoder(num_layers=2, corruption_level=CORRUPTION_LEVEL, inputs=pre_train)
         
-        smda = StackedMarginalizedDenoisingAutoencoder(num_layers=2, corruption_level=CORRUPTION_LEVEL, inputs=pre_train)
-        
-        reconstruction_train = create_projected_data(proj_s, msda)
-        reconstruction_test = create_projected_data(proj_t, msda)
+        reconstruction_train = create_projected_data(proj_s, smda)
+        reconstruction_test = create_projected_data(proj_t, smda)
 
         proj_train.append( reconstruction_train )
         proj_test.append( reconstruction_test )
-
     
     print "Creating mixture of subspaces..."
     mixture_of_subspaces = MixtureOfSubspaces(num_subspaces=len(proj_train), proj_dimension=proj_train[0].shape[1], original_dimensions=original_train_x.shape[1])
